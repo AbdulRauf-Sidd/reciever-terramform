@@ -1,0 +1,5 @@
+Flask
+google-cloud-pubsub
+psycopg2-binary
+SQLAlchemy
+python-dotenv 
