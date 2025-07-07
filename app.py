@@ -41,11 +41,13 @@ def start_subscriber(app):
             # Store in the database
             with app.app_context():
                 alert = WeatherAlert(
-                    location_name=data.get("location_name", "Unknown"),
-                    region=data.get("region", ""),
-                    country=data.get("country", ""),
-                    alert_time=data.get("alert_time"),  # ISO string expected
-                    raw_data=json.dumps(data)
+                    location_name=data["location"].get("name", "Unknown"),
+                    region=data["location"].get("region", ""),
+                    country=data["location"].get("country", ""),
+                    alert_time=data["current"].get("last_updated"),
+                    temp_c=data["current"].get("temp_c"),
+                    condition=data["current"]["condition"].get("text"),
+                    wind_kph=data["current"].get("wind_kph")
                 )
                 db.session.add(alert)
                 db.session.commit()
