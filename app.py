@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template
 from models import db, WeatherAlert
 from config import Config
 # from pubsub_subscriber import start_subscriber
@@ -16,18 +16,8 @@ db.init_app(app)
 
 @app.route('/alerts', methods=['GET'])
 def get_alerts():
-    alerts = WeatherAlert.query.order_by(WeatherAlert.alert_time.desc()).all()
-    return jsonify([
-        {
-            'id': alert.id,
-            'location_name': alert.location_name,
-            'region': alert.region,
-            'country': alert.country,
-            'alert_time': alert.alert_time.isoformat(),
-            'raw_data': alert.raw_data
-        }
-        for alert in alerts
-    ])
+    alerts = WeatherAlert.query.order_by(WeatherAlert.alert_time.desc()).limit(10).all()
+    return render_template('alerts.html', alerts=alerts)
 
 # # pubsub_subscriber.py
 
@@ -98,4 +88,4 @@ if __name__ == '__main__':
     with app.app_context():
         threading.Thread(target=start_subscriber, args=(app,), daemon=True).start()
         db.create_all()
-    app.run(host='0.0.0.0', port=8080) 
+    app.run(host='0.0.0.0', port=5000) 
